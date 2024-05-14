@@ -9,3 +9,51 @@ from django.http import JsonResponse
 def home(request):
     picture_path = r'usauniversity\usauniversity\static\images\image.jpg'  # Update this with the actual path to your picture
     return render(request, 'home.html', {r'usauniversity\usauniversity\static\images\image.jpg': picture_path})
+
+def universities_list(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Fetch universities data from the external API
+        url = 'http://universities.hipolabs.com/search?country=United+States'
+        response = requests.get(url)
+        universities_data = response.json()
+
+        # Iterate over the universities data and save them
+        for university_data in universities_data:
+            name = university_data.get('name', '')
+            country = university_data.get('country', '')
+            website = university_data.get('web_pages', [''])[0]
+
+            # Check if a university with the same name already exists
+            existing_university = University.objects.filter(name=name).exists()
+
+            if not existing_university:
+                # Create a University instance and save it if it doesn't exist
+                University.objects.create(name=name, country=country, website=website)
+
+        # Fetch all saved universities
+        universities = University.objects.all()
+        saved_universities = SavedUniversity.objects.filter(user=request.user)
+        saved_university_ids = saved_universities.values_list('university_id', flat=True)
+
+        # Prepare data to send back to the client
+        universities_list = []
+        for university in universities:
+            universities_list.append({
+                'id': university.id,
+                'name': university.name,
+                'country': university.country,
+                'website': university.website
+            })
+
+        response_data = {
+            'universities': universities_list,
+            'saved_university_ids': list(saved_university_ids)
+        }
+
+        return JsonResponse(response_data)
+
+    # Render the template for non-AJAX requests
+    universities = University.objects.all()
+    saved_universities = SavedUniversity.objects.filter(user=request.user)
+    saved_university_ids = saved_universities.values_list('university_id', flat=True)
+    return render(request, 'myt/university_list.html', {'universities': universities, 'saved_universities': saved_universities, 'saved_university_ids': saved_university_ids})

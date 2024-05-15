@@ -96,3 +96,26 @@ def delete_review(request):
         # Check if the review belongs to the current user
         if review.user == request.user:
             review.delete()
+           
+return redirect('university_reviews', university_id=review.university.id)
+
+@login_required
+def save_university(request):
+    if request.method == 'POST':
+        university_id = request.POST.get('university_id')
+        user = request.user
+        saved_university = SavedUniversity.objects.filter(user=user, university_id=university_id).first()
+        if saved_university:
+            return redirect('saved_universities')
+        else:
+            SavedUniversity.objects.create(user=user, university_id=university_id)
+            return redirect('universitie_list')
+    else:
+        return redirect('universitie_list')
+
+
+@login_required
+def saved_universities(request):
+    universities = University.objects.all()
+    saved_universities = SavedUniversity.objects.filter(user=request.user)
+    return render(request, 'myt/saved_universities.html', {'universities': universities, 'saved_universities': saved_universities})

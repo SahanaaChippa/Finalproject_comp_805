@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Universities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2; /* Light Gray */
+            color: #333; /* Dark Gray */
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff; /* White */
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow */
+        }
+        li a {
+            color: #007bff; /* Royal Blue */
+            text-decoration: none;
+        }
+        li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Saved Universities</h1>
+    <ul>
+        {% for saved_university in saved_universities %}
+            <li>
+                {{ saved_university.university.name }} - {{ saved_university.university.country }} - 
+                {% for university in universities %}
+                    {% if saved_university.university.name == university.name %}
+                        <a href="{% url 'university_reviews' university.id %}">Write a Review</a>
+                    {% endif %}
+                {% endfor %}
+            </li>
+        {% empty %}
+            <li>No saved universities.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

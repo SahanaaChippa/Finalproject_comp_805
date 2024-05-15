@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}University Detail{% endblock %}
+
+{% block content %}
+<h1>{{ university.name }}</h1>
+<p>Country: {{ university.country }}</p>
+<p>Website: <a href="{{ university.website }}">{{ university.website }}</a></p>
+
+<!-- Display reviews for the university -->
+<h2>Reviews</h2>
+{% if reviews %}
+  <ul>
+    {% for review in reviews %}
+      <li>{{ review.text }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No reviews available.</p>
+{% endif %}
+{% endblock %}

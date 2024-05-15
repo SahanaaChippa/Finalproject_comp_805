@@ -57,3 +57,20 @@ def universities_list(request):
     saved_universities = SavedUniversity.objects.filter(user=request.user)
     saved_university_ids = saved_universities.values_list('university_id', flat=True)
     return render(request, 'myt/university_list.html', {'universities': universities, 'saved_universities': saved_universities, 'saved_university_ids': saved_university_ids})
+
+@login_required
+def university_detail(request, university_id):
+    university = get_object_or_404(University, pk=university_id)
+    reviews = Review.objects.filter(university=university)
+    review_form = ReviewForm()
+
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.university = university
+            review.save()
+            return redirect('university_reviews', university_id=university_id)
+
+    return render(request, 'myt/university_reviews.html', {'university': university, 'reviews': reviews, 'review_form': review_form})

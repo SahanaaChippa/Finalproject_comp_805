@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ university.name }} Reviews</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2; /* Light Gray */
+            color: #333; /* Dark Gray */
+        }
+        h1, h2 {
+            margin-top: 0;
+            font-weight: normal;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff; /* White */
+            padding: 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow */
+        }
+        li p {
+            margin: 0;
+        }
+        .no-reviews {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ university.name }} Reviews</h1>
+    
+    <div class="reviews">
+        <h2>Reviews</h2>
+        {% if reviews %}
+            <ul>
+                {% for review in reviews %}
+                    <li>
+                        <p>{{ review.content }}</p>
+                        <p>Written by: {{ review.user.username }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-reviews">No reviews available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

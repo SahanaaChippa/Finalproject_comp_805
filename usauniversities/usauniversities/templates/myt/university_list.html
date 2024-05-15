@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Universities in the United States{% endblock %}
+
+{% block content %}
+<style>
+  /* Styling for Search Bar */
+  .search-container {
+    margin-bottom: 20px;
+  }
+
+  .search-container input[type=text] {
+    padding: 10px;
+    margin-right: 10px;
+    width: 70%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .search-container button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Royal Blue */
+    color: #fff; /* White */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .search-container button:hover {
+    background-color: #0056b3; /* Darker Royal Blue */
+  }
+
+  /* Styling for Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th, td {
+    border: 1px solid #ddd; /* Light Gray */
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2; /* Light Gray */
+  }
+
+  /* Styling for Action Buttons */
+  table button {
+    padding: 8px 16px;
+    background-color: #007bff; /* Royal Blue */
+    color: #fff; /* White */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  table button:hover {
+    background-color: #0056b3; /* Darker Royal Blue */
+  }
+</style>
+
+<h1>Universities in the United States</h1>
+
+<!-- Search Bar -->
+<div class="search-container">
+  <input type="text" id="searchInput" onkeyup="filterUniversities()" placeholder="Search by university name">
+  <button type="submit">Search</button>
+</div>
+
+
+<table id="universitiesTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Country</th>
+      <th>Website</th>
+      <th>Reviews</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="universitiesBody">
+    {% for university in universities %}
+      <tr>
+        <td>{{ university.name }}</td>
+        <td>{{ university.country }}</td>
+        <td><a href="{{ university.website }}">Website</a></td>
+        <td><a href="{% url 'university_reviews' university.id %}">Write a Review</a></td>
+        <td>
+          {% if user.is_authenticated %}
+            {% if university.id in saved_university_ids %}
+              <form method="post" action="{% url 'saved_universities' %}">
+                {% csrf_token %}
+                <input type="hidden" name="university_id" value="{{ university.id }}">
+                <button type="submit">View</button>
+              </form>
+            {% else %}
+              <form method="post" action="{% url 'save_university' %}">
+                {% csrf_token %}
+                <input type="hidden" name="university_id" value="{{ university.id }}">
+                <button type="submit">Save</button>
+              </form>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+function searchUniversities() {
+  $.ajax({
+    url: '{% url "universitie_list" %}',
+    type: 'GET',
+    success: function(data) {
+      var universities = data.universities;
+      var html = '';
+      for (var i = 0; i < universities.length; i++) {
+        html += '<tr>';
+        html += '<td>' + universities[i].name + '</td>';
+        html += '<td>' + universities[i].country + '</td>';
+        html += '<td><a href="' + universities[i].website + '">Website</a></td>';
+        html += '</tr>';
+      }
+      $('#universitiesBody').html(html);
+    },
+    error: function(xhr, textStatus, errorThrown) {
+      console.error('Error fetching universities data:', errorThrown);
+    }
+  });
+}
+
+
+function filterUniversities() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("universitiesTable");
+  tr = table.getElementsByTagName("tr");
+
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+{% endblock %}

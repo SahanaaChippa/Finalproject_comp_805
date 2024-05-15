@@ -74,3 +74,25 @@ def university_detail(request, university_id):
             return redirect('university_reviews', university_id=university_id)
 
     return render(request, 'myt/university_reviews.html', {'university': university, 'reviews': reviews, 'review_form': review_form})
+
+@login_required
+def review_update(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+    form = ReviewForm(instance=review)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            return redirect('university_reviews', university_id=review.university.pk)
+
+    return render(request, 'myt/review.html', {'form': form})
+
+@login_required
+def delete_review(request):
+    if request.method == 'POST':
+        review_id = request.POST.get('review_id')
+        review = get_object_or_404(Review, pk=review_id)
+
+        # Check if the review belongs to the current user
+        if review.user == request.user:
+            review.delete()

@@ -30,6 +30,6 @@ if __name__ == "__main__":
     # This allows easy placement of apps within the interior
     # usauniversities directory.
     current_path = Path(__file__).parent.resolve()
-    sys.path.append(str(current_path / "usauniversities"))
+    sys.path.append(str(current_path / "usauniversity"))
 
     execute_from_command_line(sys.argv)

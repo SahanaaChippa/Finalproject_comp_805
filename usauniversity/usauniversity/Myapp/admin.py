@@ -10,4 +10,4 @@ class UniversityAdmin(admin.ModelAdmin):
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ['content', 'user', 'university', 'rating']  # Add 'content' to display in the admin list view
 
-admin.site.register(Review, ReviewAdmin)
+admin.site.register(Review, ReviewAdmin)

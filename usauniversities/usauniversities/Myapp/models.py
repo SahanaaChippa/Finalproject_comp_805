@@ -11,6 +11,7 @@ class University(models.Model):
     def __str__(self):
         return str(self.name)
 
+
 class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     university = models.ForeignKey(University, on_delete=models.CASCADE)
@@ -20,3 +21,14 @@ class Review(models.Model):
 
     def _str_(self):
         return f"Review by {self.user.username} for {self.university.name}"
+
+class SavedUniversity(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    university = models.ForeignKey(University, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'university')
+
+    def _str_(self):
+        return f"{self.user.username}'s saved university: {self.university.name}"
+

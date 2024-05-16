@@ -21,7 +21,7 @@ urlpatterns = [
     # User management
     path(
         "users/",
-        include("usauniversities.users.urls", namespace="users"),
+        include("usauniversity.users.urls", namespace="users"),
     ),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here

@@ -6,9 +6,9 @@ from pathlib import Path
 
 import environ
 
-# usauniversities/
+# usauniversity/
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-APPS_DIR = BASE_DIR / "usauniversities"
+APPS_DIR = BASE_DIR / "usauniversity"
 
 env = environ.Env()
 
@@ -43,9 +43,15 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
+    # Raises ImproperlyConfigured Exception
+    # if DATABASE_URL Not in os.environ and
+    # the "default" argument is not defined.
+    # The DATABASE_URL environment variables
+    # expect a value in the following format:
+    # DATABASE_URL=postgres://user:password@hostname_or_ip:port/database_name
     "default": env.db(
         "DATABASE_URL",
-        default=f"sqlite:///{str(BASE_DIR / 'usauniversities.db')}",
+        default="postgres:///usauniversity",
     )
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -72,23 +78,24 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
+    "crispy_bootstrap4",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
 ]
 
 LOCAL_APPS = [
-    "usauniversities.users.apps.UsersConfig",
+    "usauniversity.users.apps.UsersConfig",
+    "Myapp",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
 MIGRATION_MODULES = {
-    "sites": "usauniversities.contrib.sites.migrations"
+    "sites": "usauniversity.contrib.sites.migrations"
 }
 
 # AUTHENTICATION
@@ -143,6 +150,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "Myapp.middleware.CountRequestsMiddleware",
 ]
 
 # STATIC
@@ -192,7 +201,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "usauniversities.utils.context_processors.settings_context",
+                "usauniversity.utils.context_processors.settings_context",
             ],
         },
     }
@@ -235,7 +244,7 @@ EMAIL_TIMEOUT = 5
 # Django Admin URL.
 ADMIN_URL = "admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("Sahanaa", "sahanaa@example.com")]
+ADMINS = [("Your name here", "your-name-here@example.com")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 
@@ -275,10 +284,10 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "usauniversities.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "usauniversity.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = (
-    "usauniversities.users.adapters.SocialAccountAdapter"
+    "usauniversity.users.adapters.SocialAccountAdapter"
 )
 
 # Your stuff...

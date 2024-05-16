@@ -10,5 +10,9 @@ urlpatterns = [
     path('university/', views.universities_list, name='universitie_list'),
     path('universities/<int:university_id>/reviews/', views.university_detail, name='university_reviews'),
     path('review/<int:review_id>/update/', views.review_update, name='review_update'),
+    path('delete_review/', views.delete_review, name='delete_review'),
+    path('save-university/', views.save_university, name='save_university'),
+    path('saved-universities/', views.saved_universities, name='saved_universities'),
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

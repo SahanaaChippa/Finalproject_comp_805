@@ -10,3 +10,13 @@ class University(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+class Review(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    university = models.ForeignKey(University, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)], default=1)
+
+    def _str_(self):
+        return f"Review by {self.user.username} for {self.university.name}"
